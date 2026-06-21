@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Gap Analyzer</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;
+  background:linear-gradient(to bottom,#06111f,#0b1b30);
+  color:white;
+}
+
+.app{
+  max-width:520px;
+  margin:auto;
+  padding:18px;
+}
+
+.header{
+  text-align:center;
+  padding:20px 0;
+}
+
+.header h1{
+  margin:0;
+  font-size:30px;
+}
+
+.sub{
+  color:#b8c7d9;
+  font-size:15px;
+  margin-top:6px;
+}
+
+.card{
+  background:#10243d;
+  border:1px solid #1e3e63;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  color:#d9e8f7;
+  font-weight:600;
+}
+
+input,select{
+  width:100%;
+  padding:14px;
+  margin-top:6px;
+  border-radius:12px;
+  border:none;
+  font-size:18px;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  margin-top:12px;
+  font-size:17px;
+  font-weight:bold;
+  background:#1f8cff;
+  color:white;
+}
+
+button.secondary{
+  background:#203b5c;
+}
+
+.score{
+  font-size:48px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.good{color:#4cff9b}
+.fair{color:#ffd84c}
+.bad{color:#ff5c5c}
+
+.gap{
+  background:#1b304c;
+  border-left:5px solid #ff5c5c;
+  padding:12px;
+  border-radius:12px;
+  margin:10px 0;
+}
+
+.safe{
+  background:#173f2c;
+  border-left:5px solid #4cff9b;
+  padding:12px;
+  border-radius:12px;
+  margin:10px 0;
+}
+
+.house{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+
+.box{
+  background:#152f4d;
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+}
+
+.big{
+  font-size:28px;
+}
+
+.hidden{
+  display:none;
+}
+
+.small{
+  color:#c7d6e8;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="header">
+    <h1>🛡️ Security Gap Analyzer</h1>
+    <div class="sub">Show customers protected areas, weak spots, and security scenarios.</div>
+  </div>
+
+  <div class="card">
+    <h2>Home Protection Check</h2>
+
+    <label>Protected Doors</label>
+    <input id="doors" type="number" value="3">
+
+    <label>Total First-Floor Windows</label>
+    <input id="windows" type="number" value="12">
+
+    <label>Protected Windows</label>
+    <input id="protectedWindows" type="number" value="0">
+
+    <label>Motion Detectors</label>
+    <input id="motions" type="number" value="0">
+
+    <label>Cameras</label>
+    <input id="cameras" type="number" value="0">
+
+    <label>Glass Break Sensors</label>
+    <input id="glass" type="number" value="0">
+
+    <label>Customer Main Concern</label>
+    <select id="concern">
+      <option>Break-ins</option>
+      <option>Package Theft</option>
+      <option>Family Safety</option>
+      <option>Vacation Protection</option>
+      <option>Fire Safety</option>
+    </select>
+
+    <button onclick="analyzeHome()">Analyze Home</button>
+  </div>
+
+  <div id="results" class="hidden">
+
+    <div class="card">
+      <h2>Home Protection Score</h2>
+      <div id="score" class="score">0</div>
+      <div id="scoreText" style="text-align:center;font-size:20px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Current Protection View</h2>
+      <div class="house">
+        <div class="box">
+          <div class="big">🚪</div>
+          <b id="doorView">0</b>
+          <div class="small">Protected Doors</div>
+        </div>
+        <div class="box">
+          <div class="big">🪟</div>
+          <b id="windowView">0</b>
+          <div class="small">Unprotected Windows</div>
+        </div>
+        <div class="box">
+          <div class="big">🎥</div>
+          <b id="cameraView">0</b>
+          <div class="small">Cameras</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Protection Gaps</h2>
+      <div id="gaps"></div>
+    </div>
+
+    <div class="card">
+      <h2>Security Scenarios</h2>
+      <div id="scenarios"></div>
+    </div>
+
+    <div class="card">
+      <h2>Recommended Protection Plan</h2>
+      <div id="recommendations"></div>
+    </div>
+
+    <div class="card">
+      <h2>Customer-Friendly Explanation</h2>
+      <p id="customerMessage"></p>
+    </div>
+
+    <button class="secondary" onclick="window.print()">Print / Save Report</button>
+
+  </div>
+
+</div>
+
+<script>
+function analyzeHome(){
+  const doors = Number(document.getElementById("doors").value) || 0;
+  const windows = Number(document.getElementById("windows").value) || 0;
+  const protectedWindows = Number(document.getElementById("protectedWindows").value) || 0;
+  const motions = Number(document.getElementById("motions").value) || 0;
+  const cameras = Number(document.getElementById("cameras").value) || 0;
+  const glass = Number(document.getElementById("glass").value) || 0;
+  const concern = document.getElementById("concern").value;
+
+  const unprotectedWindows = Math.max(windows - protectedWindows, 0);
+
+  let score = 100;
+
+  if(unprotectedWindows > 0) score -= Math.min(unprotectedWindows * 4, 35);
+  if(motions === 0) score -= 15;
+  if(cameras === 0) score -= 15;
+  if(glass === 0 && windows >= 6) score -= 10;
+
+  score = Math.max(score, 0);
+
+  document.getElementById("results").classList.remove("hidden");
+
+  const scoreBox = document.getElementById("score");
+  const scoreText = document.getElementById("scoreText");
+
+  scoreBox.innerText = score + "/100";
+  scoreBox.className = "score";
+
+  if(score >= 85){
+    scoreBox.classList.add("good");
+    scoreText.innerText = "Strong Protection";
+  }else if(score >= 65){
+    scoreBox.classList.add("fair");
+    scoreText.innerText = "Moderate Protection";
+  }else{
+    scoreBox.classList.add("bad");
+    scoreText.innerText = "Needs Attention";
+  }
+
+  document.getElementById("doorView").innerText = doors;
+  document.getElementById("windowView").innerText = unprotectedWindows;
+  document.getElementById("cameraView").innerText = cameras;
+
+  let gaps = "";
+
+  if(unprotectedWindows > 0){
+    gaps += `<div class="gap">⚠️ ${unprotectedWindows} window openings are not currently protected.</div>`;
+  }else{
+    gaps += `<div class="safe">✅ All listed windows are protected.</div>`;
+  }
+
+  if(motions === 0){
+    gaps += `<div class="gap">⚠️ No motion detector is listed. Interior movement may not be detected quickly.</div>`;
+  }
+
+  if(cameras === 0){
+    gaps += `<div class="gap">⚠️ No camera coverage is listed. The system may alert, but may not provide video verification.</div>`;
+  }
+
+  if(glass === 0 && windows >= 6){
+    gaps += `<div class="gap">⚠️ No glass break sensor is listed for multiple window areas.</div>`;
+  }
+
+  document.getElementById("gaps").innerHTML = gaps;
+
+  let scenarios = `
+    <div class="safe"><b>Scenario 1: Door Opens</b><br>Protected door activates the alarm system.</div>
+  `;
+
+  if(unprotectedWindows > 0){
+    scenarios += `
+      <div class="gap"><b>Scenario 2: Window Opens</b><br>An unprotected window may not trigger the alarm immediately.</div>
+    `;
+  }
+
+  if(glass === 0){
+    scenarios += `
+      <div class="gap"><b>Scenario 3: Glass Break</b><br>Without glass break detection, broken glass may not be detected as a separate event.</div>
+    `;
+  }
+
+  if(cameras === 0){
+    scenarios += `
+      <div class="gap"><b>Scenario 4: Activity Outside</b><br>Without cameras, there may be no video record of who approached the home.</div>
+    `;
+  }
+
+  document.getElementById("scenarios").innerHTML = scenarios;
+
+  let recs = "";
+
+  if(unprotectedWindows > 0){
+    recs += `<div class="gap"><b>Window Protection</b><br>Recommended to help secure accessible window openings.</div>`;
+  }
+
+  if(motions === 0){
+    recs += `<div class="gap"><b>Motion Detector</b><br>Adds interior protection if someone enters an area of the home.</div>`;
+  }
+
+  if(cameras === 0){
+    recs += `<div class="gap"><b>Camera Coverage</b><br>Helps provide visibility and video history around important areas.</div>`;
+  }
+
+  if(glass === 0 && windows >= 6){
+    recs += `<div class="gap"><b>Glass Break Sensor</b><br>Recommended for rooms with several windows or large glass areas.</div>`;
+  }
+
+  if(concern === "Package Theft"){
+    recs += `<div class="safe"><b>Concern: Package Theft</b><br>A doorbell camera or front camera can help monitor deliveries.</div>`;
+  }
+
+  if(concern === "Vacation Protection"){
+    recs += `<div class="safe"><b>Concern: Vacation Protection</b><br>Cameras, motion detection, and window protection help monitor the home while away.</div>`;
+  }
+
+  if(concern === "Family Safety"){
+    recs += `<div class="safe"><b>Concern: Family Safety</b><br>Interior protection and video awareness can help monitor key areas.</div>`;
+  }
+
+  document.getElementById("recommendations").innerHTML = recs || "<div class='safe'>✅ No major gaps found based on this assessment.</div>";
+
+  document.getElementById("customerMessage").innerHTML =
+    `Based on this review, the doors may be protected, but the home may still have other possible entry points. 
+    This assessment helps show where protection is strong and where additional coverage may help improve security.`;
+}
+</script>
+
+</body>
+</html>
