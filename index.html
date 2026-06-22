@@ -199,27 +199,27 @@ button.secondary{
 
 <div class="safe">
 ✅ Protected Doors:
-<span id="doorView"></span>
+<span id="doorSummary"></span>
 </div>
 
 <div class="gap">
 🔴 Unprotected Windows:
-<span id="windowView"></span>
+<span id="windowSummary"></span>
 </div>
 
 <div class="safe">
 🟡 Motion Detectors:
-<span id="motionView"></span>
+<span id="motionSummary"></span>
 </div>
 
 <div class="safe">
 🎥 Cameras:
-<span id="cameraView"></span>
+<span id="cameraSummary"></span>
 </div>
 
 <div class="gap">
 💥 Glass Break Protection:
-<span id="glassView"></span>
+<span id="glassSummary"></span>
 </div>
 
 </div>
@@ -315,10 +315,14 @@ document.getElementById("coProtection").value;
 
 
   document.getElementById("doorView").innerText = doors;
-  document.getElementById("windowView").innerText = unprotectedWindows;
-  document.getElementById("cameraView").innerText = cameras;
-  document.getElementById("motionView").innerText = motions;
-document.getElementById("glassView").innerText = glass;
+document.getElementById("windowView").innerText = unprotectedWindows;
+document.getElementById("cameraView").innerText = cameras;
+
+document.getElementById("doorSummary").innerText = doors;
+document.getElementById("windowSummary").innerText = unprotectedWindows;
+document.getElementById("cameraSummary").innerText = cameras;
+document.getElementById("motionSummary").innerText = motions;
+document.getElementById("glassSummary").innerText = glass;
   let gaps = "";
 
   if(unprotectedWindows > 0){
