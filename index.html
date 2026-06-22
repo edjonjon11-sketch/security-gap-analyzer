@@ -141,8 +141,33 @@ button.secondary{
     <div class="sub">Show customers protected areas, weak spots, and security scenarios.</div>
   </div>
 
-  <div class="card">
-    <h2>Home Protection Check</h2>
+<div class="card">
+<h2>Job Information</h2>
+
+<div class="safe">
+Job Number:
+<span id="jobNumberDisplay"></span>
+</div>
+
+<div class="safe">
+Customer:
+<span id="customerNameDisplay"></span>
+</div>
+
+</div>
+  
+  <h2 onclick="toggleHomeCheck()"
+style="cursor:pointer;">
+🏠 Home Protection Check ▼
+</h2>
+
+<div id="homeCheckSection">  
+
+    <label>Job Number</label>
+<input id="jobNumber" type="text" placeholder="Enter Job Number">
+
+<label>Customer Name</label>
+<input id="customerName" type="text" placeholder="Enter Customer Name">
 
     <label>Protected Doors</label>
     <input id="doors" type="number" value="3">
@@ -288,7 +313,11 @@ function analyzeHome(){
 
   const unprotectedWindows = Math.max(windows - protectedWindows, 0);
 
+const jobNumber =
+document.getElementById("jobNumber").value;
 
+const customerName =
+document.getElementById("customerName").value;
   
 const bedrooms =
 Number(document.getElementById("bedrooms").value) || 0;
@@ -313,6 +342,11 @@ document.getElementById("coProtection").value;
 
   document.getElementById("results").classList.remove("hidden");
 
+  document.getElementById("jobNumberDisplay").innerText =
+jobNumber;
+
+document.getElementById("customerNameDisplay").innerText =
+customerName;
 
   document.getElementById("doorView").innerText = doors;
 document.getElementById("windowView").innerText = unprotectedWindows;
@@ -438,6 +472,19 @@ document.getElementById("lifeSafety").innerHTML = lifeSafety;
     `Based on this review, the doors may be protected, but the home may still have other possible entry points. 
     This assessment helps show where protection is strong and where additional coverage may help improve security.`;
 }
+
+ function toggleHomeCheck(){
+
+const section =
+document.getElementById("homeCheckSection");
+
+if(section.style.display === "none"){
+section.style.display = "block";
+}else{
+section.style.display = "none";
+}
+
+} 
 </script>
 
 </body>
