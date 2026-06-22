@@ -141,21 +141,7 @@ button.secondary{
     <div class="sub">Show customers protected areas, weak spots, and security scenarios.</div>
   </div>
 
-<div class="card">
-<h2>Job Information</h2>
-
-<div class="safe">
-Job Number:
-<span id="jobNumberDisplay"></span>
-</div>
-
-<div class="safe">
-Customer:
-<span id="customerNameDisplay"></span>
-</div>
-
-</div>
-  
+ <div class="card"> 
   <h2 onclick="toggleHomeCheck()"
 style="cursor:pointer;">
 🏠 Home Protection Check ▼
@@ -164,7 +150,10 @@ style="cursor:pointer;">
 <div id="homeCheckSection">  
 
     <label>Job Number</label>
-<input id="jobNumber" type="text" placeholder="Enter Job Number">
+<input id="jobNumber"
+type="text"
+inputmode="numeric"
+placeholder="Enter Job Number">
 
 <label>Customer Name</label>
 <input id="customerName" type="text" placeholder="Enter Customer Name">
@@ -215,9 +204,24 @@ style="cursor:pointer;">
     </select>
 
     <button onclick="analyzeHome()">Analyze Home</button>
-  </div>
-
+</div>  <!-- closes homeCheckSection -->
+</div>  <!-- closes card -->
   <div id="results" class="hidden">
+
+<div class="card">
+<h2>Job Information</h2>
+
+<div class="safe">
+Job Number:
+<span id="jobNumberDisplay"></span>
+</div>
+
+<div class="safe">
+Customer:
+<span id="customerNameDisplay"></span>
+</div>
+
+</div>
 
     <div class="card">
 <h2>Protection Review Summary</h2>
