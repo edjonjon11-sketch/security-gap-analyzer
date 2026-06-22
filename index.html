@@ -313,27 +313,12 @@ document.getElementById("coProtection").value;
 
   document.getElementById("results").classList.remove("hidden");
 
-  const scoreBox = document.getElementById("score");
-  const scoreText = document.getElementById("scoreText");
-
-  scoreBox.innerText = score + "/100";
-  scoreBox.className = "score";
-
-  if(score >= 85){
-    scoreBox.classList.add("good");
-    scoreText.innerText = "Strong Protection";
-  }else if(score >= 65){
-    scoreBox.classList.add("fair");
-    scoreText.innerText = "Moderate Protection";
-  }else{
-    scoreBox.classList.add("bad");
-    scoreText.innerText = "Needs Attention";
-  }
 
   document.getElementById("doorView").innerText = doors;
   document.getElementById("windowView").innerText = unprotectedWindows;
   document.getElementById("cameraView").innerText = cameras;
-
+  document.getElementById("motionView").innerText = motions;
+document.getElementById("glassView").innerText = glass;
   let gaps = "";
 
   if(unprotectedWindows > 0){
@@ -449,9 +434,6 @@ document.getElementById("lifeSafety").innerHTML = lifeSafety;
     `Based on this review, the doors may be protected, but the home may still have other possible entry points. 
     This assessment helps show where protection is strong and where additional coverage may help improve security.`;
 }
-
-  document.getElementById("motionView").innerText = motions;
-document.getElementById("glassView").innerText = glass;
 </script>
 
 </body>
