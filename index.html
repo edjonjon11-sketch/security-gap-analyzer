@@ -204,6 +204,14 @@ placeholder="Enter Job Number">
     </select>
 
     <button onclick="analyzeHome()">Analyze Home</button>
+    <button onclick="saveJob()">
+💾 Save Job
+</button>
+
+<button onclick="emailJobs()">
+📧 Email Saved Jobs
+</button>
+  
 </div>  <!-- closes homeCheckSection -->
 </div>  <!-- closes card -->
   <div id="results" class="hidden">
@@ -222,7 +230,11 @@ Customer:
 </div>
 
 </div>
-
+    
+<div class="card">
+<h2>Saved Jobs</h2>
+<div id="savedJobs"></div>
+</div>
     <div class="card">
 <h2>Protection Review Summary</h2>
 
