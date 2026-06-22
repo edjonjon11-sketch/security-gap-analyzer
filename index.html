@@ -211,7 +211,10 @@ placeholder="Enter Job Number">
 <button onclick="emailJobs()">
 📧 Email Saved Jobs
 </button>
-  
+
+<button onclick="loadSavedJobs()">
+📋 Refresh Saved Jobs
+</button>
 </div>  <!-- closes homeCheckSection -->
 </div>  <!-- closes card -->
   <div id="results" class="hidden">
@@ -501,6 +504,156 @@ section.style.display = "none";
 }
 
 } 
+  function saveJob(){
+
+const jobs =
+JSON.parse(localStorage.getItem("securityJobs") || "[]");
+
+const job = {
+jobNumber: document.getElementById("jobNumber").value,
+customerName: document.getElementById("customerName").value,
+doors: document.getElementById("doors").value,
+windows: document.getElementById("windows").value,
+protectedWindows: document.getElementById("protectedWindows").value,
+motions: document.getElementById("motions").value,
+cameras: document.getElementById("cameras").value,
+glass: document.getElementById("glass").value,
+bedrooms: document.getElementById("bedrooms").value,
+protectedBedrooms: document.getElementById("protectedBedrooms").value,
+hallSmoke: document.getElementById("hallSmoke").value,
+coProtection: document.getElementById("coProtection").value,
+concern: document.getElementById("concern").value,
+date: new Date().toLocaleString()
+};
+
+jobs.push(job);
+
+localStorage.setItem(
+"securityJobs",
+JSON.stringify(jobs)
+);
+
+loadSavedJobs();
+
+alert("Job Saved");
+}
+
+function loadSavedJobs(){
+
+const jobs =
+JSON.parse(localStorage.getItem("securityJobs") || "[]");
+
+let html = "";
+
+jobs.forEach((job,index)=>{
+
+html += `
+<div class="safe">
+<b>${job.jobNumber}</b><br>
+${job.customerName}<br>
+${job.date}<br><br>
+
+<button onclick="viewJob(${index})">
+👁 View
+</button>
+
+<button onclick="deleteJob(${index})">
+🗑 Delete
+</button>
+</div>
+`;
+});
+
+document.getElementById("savedJobs").innerHTML =
+html || "No Saved Jobs";
+}
+
+function viewJob(index){
+
+const jobs =
+JSON.parse(localStorage.getItem("securityJobs") || "[]");
+
+const job = jobs[index];
+
+document.getElementById("jobNumber").value =
+job.jobNumber;
+
+document.getElementById("customerName").value =
+job.customerName;
+
+document.getElementById("doors").value =
+job.doors;
+
+document.getElementById("windows").value =
+job.windows;
+
+document.getElementById("protectedWindows").value =
+job.protectedWindows;
+
+document.getElementById("motions").value =
+job.motions;
+
+document.getElementById("cameras").value =
+job.cameras;
+
+document.getElementById("glass").value =
+job.glass;
+
+document.getElementById("bedrooms").value =
+job.bedrooms;
+
+document.getElementById("protectedBedrooms").value =
+job.protectedBedrooms;
+
+document.getElementById("hallSmoke").value =
+job.hallSmoke;
+
+document.getElementById("coProtection").value =
+job.coProtection;
+
+document.getElementById("concern").value =
+job.concern;
+
+analyzeHome();
+}
+
+function deleteJob(index){
+
+const jobs =
+JSON.parse(localStorage.getItem("securityJobs") || "[]");
+
+jobs.splice(index,1);
+
+localStorage.setItem(
+"securityJobs",
+JSON.stringify(jobs)
+);
+
+loadSavedJobs();
+}
+
+function emailJobs(){
+
+const jobs =
+JSON.parse(localStorage.getItem("securityJobs") || "[]");
+
+let report =
+"Security Gap Analyzer Reports\n\n";
+
+jobs.forEach(job=>{
+
+report +=
+"Job #: " + job.jobNumber + "\n" +
+"Customer: " + job.customerName + "\n" +
+"Date: " + job.date + "\n\n";
+});
+
+window.location.href =
+"mailto:?subject=Security Gap Reports&body=" +
+encodeURIComponent(report);
+}
+
+loadSavedJobs();
 </script>
 
 </body>
