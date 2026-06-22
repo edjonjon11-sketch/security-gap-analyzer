@@ -159,6 +159,24 @@ button.secondary{
     <label>Cameras</label>
     <input id="cameras" type="number" value="0">
 
+    <label>Bedrooms</label>
+<input id="bedrooms" type="number" value="3">
+
+<label>Protected Bedrooms</label>
+<input id="protectedBedrooms" type="number" value="3">
+
+<label>Hallway Smoke Detector</label>
+<select id="hallSmoke">
+<option>Yes</option>
+<option>No</option>
+</select>
+
+<label>Carbon Monoxide Protection</label>
+<select id="coProtection">
+<option>Yes</option>
+<option>No</option>
+</select>
+
     <label>Glass Break Sensors</label>
     <input id="glass" type="number" value="0">
 
@@ -177,10 +195,34 @@ button.secondary{
   <div id="results" class="hidden">
 
     <div class="card">
-      <h2>Home Protection Score</h2>
-      <div id="score" class="score">0</div>
-      <div id="scoreText" style="text-align:center;font-size:20px;"></div>
-    </div>
+<h2>Protection Review Summary</h2>
+
+<div class="safe">
+✅ Protected Doors:
+<span id="doorView"></span>
+</div>
+
+<div class="gap">
+🔴 Unprotected Windows:
+<span id="windowView"></span>
+</div>
+
+<div class="safe">
+🟡 Motion Detectors:
+<span id="motionView"></span>
+</div>
+
+<div class="safe">
+🎥 Cameras:
+<span id="cameraView"></span>
+</div>
+
+<div class="gap">
+💥 Glass Break Protection:
+<span id="glassView"></span>
+</div>
+
+</div>
 
     <div class="card">
       <h2>Current Protection View</h2>
@@ -219,6 +261,11 @@ button.secondary{
     </div>
 
     <div class="card">
+<h2>Life Safety Review</h2>
+<div id="lifeSafety"></div>
+</div>
+    
+    <div class="card">
       <h2>Customer-Friendly Explanation</h2>
       <p id="customerMessage"></p>
     </div>
@@ -240,6 +287,20 @@ function analyzeHome(){
   const concern = document.getElementById("concern").value;
 
   const unprotectedWindows = Math.max(windows - protectedWindows, 0);
+
+
+  
+const bedrooms =
+Number(document.getElementById("bedrooms").value) || 0;
+
+const protectedBedrooms =
+Number(document.getElementById("protectedBedrooms").value) || 0;
+
+const hallSmoke =
+document.getElementById("hallSmoke").value;
+
+const coProtection =
+document.getElementById("coProtection").value;
 
   let score = 100;
 
@@ -351,10 +412,46 @@ function analyzeHome(){
 
   document.getElementById("recommendations").innerHTML = recs || "<div class='safe'>✅ No major gaps found based on this assessment.</div>";
 
+let lifeSafety = "";
+
+if(protectedBedrooms < bedrooms){
+lifeSafety += `
+<div class="gap">
+🔥 ${bedrooms - protectedBedrooms}
+bedroom(s) may not have smoke protection.
+</div>`;
+}
+
+if(hallSmoke === "No"){
+lifeSafety += `
+<div class="gap">
+🔥 No hallway smoke detector listed.
+</div>`;
+}
+
+if(coProtection === "No"){
+lifeSafety += `
+<div class="gap">
+💨 No carbon monoxide protection listed.
+</div>`;
+}
+
+if(lifeSafety === ""){
+lifeSafety = `
+<div class="safe">
+✅ Life safety protection appears complete based on the information entered.
+</div>`;
+}
+
+document.getElementById("lifeSafety").innerHTML = lifeSafety;
+  
   document.getElementById("customerMessage").innerHTML =
     `Based on this review, the doors may be protected, but the home may still have other possible entry points. 
     This assessment helps show where protection is strong and where additional coverage may help improve security.`;
 }
+
+  document.getElementById("motionView").innerText = motions;
+document.getElementById("glassView").innerText = glass;
 </script>
 
 </body>
