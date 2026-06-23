@@ -256,7 +256,7 @@ Customer:
 <span id="motionSummary"></span>
 </div>
 
-<div class="safe">
+<div id="cameraCard">
 🎥 Cameras:
 <span id="cameraSummary"></span>
 </div>
@@ -374,6 +374,11 @@ document.getElementById("cameraView").innerText = cameras;
 document.getElementById("doorSummary").innerText = doors;
 document.getElementById("windowSummary").innerText = unprotectedWindows;
 document.getElementById("cameraSummary").innerText = cameras;
+const cameraCard =
+document.getElementById("cameraCard");
+
+cameraCard.className =
+(cameras === 0) ? "gap" : "safe";
 document.getElementById("motionSummary").innerText = motions;
 document.getElementById("glassSummary").innerText = glass;
   let gaps = "";
@@ -523,10 +528,24 @@ protectedBedrooms: document.getElementById("protectedBedrooms").value,
 hallSmoke: document.getElementById("hallSmoke").value,
 coProtection: document.getElementById("coProtection").value,
 concern: document.getElementById("concern").value,
+
+gaps: document.getElementById("gaps").innerHTML,
+lifeSafety: document.getElementById("lifeSafety").innerHTML,
+recommendations: document.getElementById("recommendations").innerHTML,
+customerMessage: document.getElementById("customerMessage").innerHTML,
+
 date: new Date().toLocaleString()
 };
 
+const existingIndex = jobs.findIndex(
+j => j.jobNumber === job.jobNumber
+);
+
+if(existingIndex >= 0){
+jobs[existingIndex] = job;
+}else{
 jobs.push(job);
+}
 
 localStorage.setItem(
 "securityJobs",
@@ -626,6 +645,11 @@ job.recommendations;
 document.getElementById("customerMessage").innerHTML =
 job.customerMessage;
 
+document.getElementById("results")
+.scrollIntoView({
+behavior:"smooth"
+});
+  
 analyzeHome();
 }
 
