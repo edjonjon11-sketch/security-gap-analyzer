@@ -139,8 +139,12 @@ button.secondary{
   <div class="header">
     <h1>🛡️ Security Gap Analyzer</h1>
     <div class="sub">Show customers protected areas, weak spots, and security scenarios.</div>
+ <button onclick="showMainScreen()">🏠 Home Check</button>
+<button onclick="showSavedJobsScreen()">📋 Saved Jobs Screen</button>
   </div>
 
+<div id="mainScreen">
+  
  <div class="card"> 
   <h2 onclick="toggleHomeCheck()"
 style="cursor:pointer;">
@@ -217,6 +221,20 @@ placeholder="Enter Job Number">
 </button>
 </div>  <!-- closes homeCheckSection -->
 </div>  <!-- closes card -->
+
+  </div>
+
+  <div id="savedJobsScreen" class="hidden">
+
+<div class="card">
+<h2>📋 Saved Jobs</h2>
+<div id="savedJobs"></div>
+</div>
+
+<button onclick="showMainScreen()">⬅️ Back to Home Check</button>
+
+</div>
+  
   <div id="results" class="hidden">
 
 <div class="card">
@@ -509,9 +527,20 @@ section.style.display = "none";
 }
 
 } 
-  function saveJob(){
+  function showMainScreen(){
+document.getElementById("mainScreen").classList.remove("hidden");
+document.getElementById("savedJobsScreen").classList.add("hidden");
+}
 
-  analyzeHome();
+function showSavedJobsScreen(){
+document.getElementById("mainScreen").classList.add("hidden");
+document.getElementById("savedJobsScreen").classList.remove("hidden");
+loadSavedJobs();
+}
+
+function saveJob(){
+
+analyzeHome();
 
 const jobs =
 JSON.parse(localStorage.getItem("securityJobs") || "[]");
@@ -530,18 +559,11 @@ protectedBedrooms: document.getElementById("protectedBedrooms").value,
 hallSmoke: document.getElementById("hallSmoke").value,
 coProtection: document.getElementById("coProtection").value,
 concern: document.getElementById("concern").value,
-
-gaps: document.getElementById("gaps").innerHTML,
-lifeSafety: document.getElementById("lifeSafety").innerHTML,
-recommendations: document.getElementById("recommendations").innerHTML,
-customerMessage: document.getElementById("customerMessage").innerHTML,
-
 date: new Date().toLocaleString()
 };
 
-const existingIndex = jobs.findIndex(
-j => j.jobNumber === job.jobNumber
-);
+const existingIndex =
+jobs.findIndex(j => j.jobNumber === job.jobNumber && job.jobNumber !== "");
 
 if(existingIndex >= 0){
 jobs[existingIndex] = job;
@@ -549,14 +571,10 @@ jobs[existingIndex] = job;
 jobs.push(job);
 }
 
-localStorage.setItem(
-"securityJobs",
-JSON.stringify(jobs)
-);
-
-loadSavedJobs();
+localStorage.setItem("securityJobs", JSON.stringify(jobs));
 
 alert("Job Saved");
+showSavedJobsScreen();
 }
 
 function loadSavedJobs(){
