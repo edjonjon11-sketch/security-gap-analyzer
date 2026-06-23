@@ -511,6 +511,8 @@ section.style.display = "none";
 } 
   function saveJob(){
 
+  analyzeHome();
+
 const jobs =
 JSON.parse(localStorage.getItem("securityJobs") || "[]");
 
@@ -568,12 +570,12 @@ jobs.forEach((job,index)=>{
 
 html += `
 <div class="safe">
-<b>${job.jobNumber}</b><br>
-${job.customerName}<br>
-${job.date}<br><br>
+<b>Job #${job.jobNumber || "No Job Number"}</b><br>
+Customer: ${job.customerName || "No Customer Name"}<br>
+Date: ${job.date}<br><br>
 
 <button onclick="viewJob(${index})">
-👁 View
+👁 View Report
 </button>
 
 <button onclick="deleteJob(${index})">
@@ -581,7 +583,6 @@ ${job.date}<br><br>
 </button>
 </div>
 `;
-});
 
 document.getElementById("savedJobs").innerHTML =
 html || "No Saved Jobs";
