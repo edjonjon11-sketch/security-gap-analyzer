@@ -328,7 +328,9 @@ Customer:
       <p id="customerMessage"></p>
     </div>
 
-    <button class="secondary" onclick="window.print()">Print / Save Report</button>
+    <button class="secondary" onclick="emailCurrentReport()">
+📧 Email Current Report
+</button>
 
   </div>
 
@@ -707,6 +709,30 @@ encodeURIComponent(report);
 }
 
 loadSavedJobs();
+
+function emailCurrentReport(){
+
+const report = `
+Security Gap Analyzer Report
+
+Job #: ${document.getElementById("jobNumber").value}
+Customer: ${document.getElementById("customerName").value}
+
+Protection Gaps
+${document.getElementById("gaps").innerText}
+
+Life Safety Review
+${document.getElementById("lifeSafety").innerText}
+
+Recommendations
+${document.getElementById("recommendations").innerText}
+`;
+
+window.location.href =
+"mailto:?subject=Security Gap Analyzer Report&body=" +
+encodeURIComponent(report);
+
+}
 </script>
 
 </body>
