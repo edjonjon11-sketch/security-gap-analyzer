@@ -332,6 +332,17 @@ button.danger{
 <span id="keypadsDisplay">1</span>
 <button onclick="changeValue('keypads',1)">+</button>
 </div>
+
+<label>Technician Notes</label>
+<textarea id="techNotes" placeholder="Add notes for this customer..." style="
+width:100%;
+min-height:100px;
+padding:14px;
+margin-top:6px;
+border-radius:14px;
+border:none;
+font-size:17px;
+"></textarea>
 </div>
 
 <!-- STEP 6 -->
@@ -480,6 +491,10 @@ const customer = document.getElementById("customerName").value || "Not entered";
 const address = document.getElementById("address").value || "Not entered";
 const tech = document.getElementById("technician").value || "Not entered";
 const stories = document.getElementById("stories").value;
+const notes = document.getElementById("techNotes")?.value || "";
+
+const hallway = document.getElementById("hallwaySmoke").value;
+const co = document.getElementById("coProtection").value;
 
 const doorbell = document.getElementById("doorbell").value;
 const frontCam = document.getElementById("frontCam").value;
@@ -488,78 +503,80 @@ const rightCam = document.getElementById("rightCam").value;
 const backCam = document.getElementById("backCam").value;
 const garageCam = document.getElementById("garageCam").value;
 
-let totalWindows = data.mainWindows + data.secondWindows;
+const totalWindows = data.mainWindows + data.secondWindows;
 
 let gaps = [];
-
-if(totalWindows > 0){
-gaps.push(`${totalWindows} window openings should be reviewed for protection.`);
-}
-
-if(data.motions === 0){
-gaps.push("No motion detector listed.");
-}
-
-if(data.glassBreaks === 0 && data.mainWindows >= 6){
-gaps.push("Glass break protection should be considered for rooms with multiple windows.");
-}
-
-if(doorbell === "No"){
-gaps.push("Doorbell camera not listed.");
-}
-
-if(frontCam === "No"){
-gaps.push("Front camera not listed.");
-}
-
-if(rightCam === "No"){
-gaps.push("Right side camera not listed.");
-}
-
-let life = [];
-
-life.push(`${data.bedrooms} bedroom combo smoke(s) recommended.`);
-
-if(document.getElementById("hallwaySmoke").value === "No"){
-life.push("Hallway smoke / combo recommended.");
-}
-
-if(document.getElementById("coProtection").value === "No"){
-life.push("Carbon monoxide protection recommended.");
-}
-
 let equipment = [];
+let talkingPoints = [];
 
 equipment.push(`${data.doors} Door Contacts`);
-equipment.push(`${totalWindows} Window Contacts`);
-equipment.push(`${data.bedrooms} Bedroom Combo Smokes`);
 
-if(document.getElementById("hallwaySmoke").value === "No"){
-equipment.push("1 Hallway Combo Smoke");
+if(totalWindows > 0){
+equipment.push(`${totalWindows} Window Contacts`);
+gaps.push(`${totalWindows} window opening(s) should be reviewed for protection.`);
+talkingPoints.push(`This home has ${totalWindows} window opening(s). Protecting only the doors may still leave accessible entry points.`);
 }
 
-if(document.getElementById("coProtection").value === "No"){
-equipment.push("CO Protection");
+equipment.push(`${data.bedrooms} Bedroom Combo Smoke(s)`);
+
+if(hallway === "No"){
+equipment.push("1 Hallway Combo Smoke");
+gaps.push("Hallway smoke / combo protection is not listed.");
+}
+
+if(co === "No"){
+equipment.push("Carbon Monoxide Protection");
+gaps.push("Carbon monoxide protection is not listed.");
 }
 
 if(data.motions === 0){
 equipment.push("1 Motion Detector");
+gaps.push("No motion detector is listed.");
+talkingPoints.push("A motion detector can add interior coverage if someone enters through an area that is not protected at the perimeter.");
+}else{
+equipment.push(`${data.motions} Motion Detector(s)`);
 }
 
 if(data.glassBreaks === 0 && data.mainWindows >= 6){
 equipment.push("1 Glass Break Sensor");
+gaps.push("Glass break protection should be considered for rooms with multiple windows.");
+}else if(data.glassBreaks > 0){
+equipment.push(`${data.glassBreaks} Glass Break Sensor(s)`);
 }
 
 if(doorbell === "No"){
 equipment.push("Doorbell Camera");
+gaps.push("Doorbell camera is not listed.");
 }
 
 if(frontCam === "No"){
 equipment.push("Front Camera");
+gaps.push("Front camera is not listed.");
+}
+
+if(leftCam === "No"){
+gaps.push("Left side camera is not listed.");
 }
 
 if(rightCam === "No"){
 equipment.push("Right Side Camera");
+gaps.push("Right side camera is not listed.");
+}
+
+if(backCam === "No"){
+gaps.push("Backyard camera is not listed.");
+}
+
+if(garageCam === "No"){
+gaps.push("Garage / driveway camera is not listed.");
+}
+
+if(gaps.length === 0){
+gaps.push("No major protection gaps found based on this assessment.");
+}
+
+if(talkingPoints.length === 0){
+talkingPoints.push("This review helps confirm current protection and identify any areas that may need additional coverage.");
 }
 
 let html = `
@@ -572,7 +589,7 @@ let html = `
 </div>
 
 <div class="summaryBox">
-<b>Home Layout</b><br>
+<b>Home Summary</b><br>
 Doors: ${data.doors}<br>
 Main Floor Windows: ${data.mainWindows}<br>
 Second Floor Windows: ${data.secondWindows}<br>
@@ -586,7 +603,9 @@ ${gaps.map(g=>`<div class="badText">⚠️ ${g}</div>`).join("")}
 
 <div class="summaryBox">
 <b>Life Safety Review</b><br>
-${life.map(l=>`<div class="warnText">🔥 ${l}</div>`).join("")}
+<div>🔥 Bedroom Combo Smokes Recommended: ${data.bedrooms}</div>
+${hallway === "No" ? `<div class="badText">⚠️ Hallway combo smoke recommended.</div>` : `<div class="goodText">✅ Hallway protection present.</div>`}
+${co === "No" ? `<div class="badText">⚠️ Carbon monoxide protection recommended.</div>` : `<div class="goodText">✅ CO protection present.</div>`}
 </div>
 
 <div class="summaryBox">
@@ -595,8 +614,13 @@ ${equipment.map(e=>`<div class="goodText">✔ ${e}</div>`).join("")}
 </div>
 
 <div class="summaryBox">
-<b>Customer Explanation</b><br>
-This review shows the current protection areas and highlights additional coverage that may improve entry point protection, life safety, and video awareness.
+<b>Customer Talking Points</b><br>
+${talkingPoints.map(t=>`<div>💬 ${t}</div>`).join("")}
+</div>
+
+<div class="summaryBox">
+<b>Technician Notes</b><br>
+${notes || "No notes entered."}
 </div>
 `;
 
@@ -615,6 +639,8 @@ encodeURIComponent(report);
 
 function collectAssessment(){
 generateReport();
+
+techNotes: document.getElementById("techNotes")?.value || "",
 
 return {
 id: Date.now(),
@@ -732,6 +758,8 @@ document.getElementById("address").value = job.address;
 document.getElementById("technician").value = job.technician;
 document.getElementById("stories").value = job.stories;
 
+document.getElementById("techNotes").value = job.techNotes || "";
+  
 data.doors = job.doors;
 data.mainWindows = job.mainWindows;
 data.secondWindows = job.secondWindows;
