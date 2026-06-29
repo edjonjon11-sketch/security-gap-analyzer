@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security Gap Analyzer</title>
+<title>Security Gap Analyzer Pro</title>
 
 <style>
 *{box-sizing:border-box}
@@ -11,62 +11,64 @@
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;
-  background:linear-gradient(to bottom,#06111f,#0b1b30);
+  background:#07111f;
   color:white;
 }
 
 .app{
   max-width:520px;
   margin:auto;
-  padding:18px;
+  padding:16px;
+  padding-bottom:80px;
 }
 
 .header{
-  text-align:center;
-  padding:20px 0;
+  background:linear-gradient(135deg,#0b6cff,#38c7ff);
+  padding:22px;
+  border-radius:24px;
+  margin-bottom:16px;
 }
 
 .header h1{
   margin:0;
-  font-size:30px;
+  font-size:28px;
 }
 
 .sub{
-  color:#b8c7d9;
-  font-size:15px;
   margin-top:6px;
+  color:#e8f4ff;
 }
 
 .card{
   background:#10243d;
-  border:1px solid #1e3e63;
-  border-radius:18px;
+  border:1px solid #1f456d;
+  border-radius:22px;
   padding:16px;
   margin-bottom:16px;
-  box-shadow:0 8px 24px rgba(0,0,0,.25);
 }
+
+h2{margin-top:0}
 
 label{
   display:block;
-  margin-top:12px;
-  color:#d9e8f7;
-  font-weight:600;
+  margin-top:14px;
+  font-weight:700;
 }
 
 input,select{
   width:100%;
   padding:14px;
   margin-top:6px;
-  border-radius:12px;
+  border-radius:14px;
   border:none;
-  font-size:18px;
+  font-size:17px;
 }
 
 button{
   width:100%;
   padding:15px;
   border:none;
-  border-radius:14px;
+  border-radius:16px;
   margin-top:12px;
   font-size:17px;
   font-weight:bold;
@@ -78,57 +80,79 @@ button.secondary{
   background:#203b5c;
 }
 
-.score{
-  font-size:48px;
-  font-weight:bold;
-  text-align:center;
+button.good{
+  background:#178a4b;
 }
 
-.good{color:#4cff9b}
-.fair{color:#ffd84c}
-.bad{color:#ff5c5c}
+button.danger{
+  background:#b43737;
+}
 
-.gap{
-  background:#1b304c;
-  border-left:5px solid #ff5c5c;
+.screen{display:none}
+.active{display:block}
+
+.stepBar{
+  height:10px;
+  background:#1b3552;
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:16px;
+}
+
+.stepFill{
+  height:100%;
+  width:0%;
+  background:#38c7ff;
+}
+
+.counter{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#0c1c31;
   padding:12px;
-  border-radius:12px;
-  margin:10px 0;
+  border-radius:16px;
+  margin-top:10px;
 }
 
-.safe{
-  background:#173f2c;
-  border-left:5px solid #4cff9b;
-  padding:12px;
-  border-radius:12px;
-  margin:10px 0;
-}
-
-.house{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:12px;
-}
-
-.box{
-  background:#152f4d;
-  padding:14px;
-  border-radius:14px;
-  text-align:center;
-}
-
-.big{
+.counter span{
   font-size:28px;
+  font-weight:bold;
 }
 
-.hidden{
-  display:none;
+.counter button{
+  width:54px;
+  margin:0;
+  padding:12px;
 }
 
-.small{
-  color:#c7d6e8;
-  font-size:14px;
+.summaryBox{
+  background:#0c1c31;
+  padding:14px;
+  border-radius:16px;
+  margin:10px 0;
+}
+
+.goodText{color:#4cff9b}
+.warnText{color:#ffd84c}
+.badText{color:#ff6b6b}
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#081525;
+  border-top:1px solid #1f456d;
+  display:flex;
+  gap:6px;
+  padding:8px;
+}
+
+.nav button{
+  margin:0;
+  font-size:13px;
+  padding:10px;
 }
 </style>
 </head>
@@ -136,603 +160,450 @@ button.secondary{
 <body>
 <div class="app">
 
-  <div class="header">
-    <h1>🛡️ Security Gap Analyzer</h1>
-    <div class="sub">Show customers protected areas, weak spots, and security scenarios.</div>
- <button onclick="showMainScreen()">🏠 Home Check</button>
-<button onclick="showSavedJobsScreen()">📋 Saved Jobs Screen</button>
+<div class="header">
+<h1>🛡️ Security Gap Analyzer Pro</h1>
+<div class="sub">Guided home protection assessment</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen active">
+  <div class="card">
+    <h2>Home Dashboard</h2>
+    <button onclick="startAssessment()">➕ New Assessment</button>
+    <button class="secondary" onclick="showScreen('saved')">📋 Saved Assessments</button>
+    <button class="secondary" onclick="showScreen('reports')">📊 Reports</button>
   </div>
 
-<div id="mainScreen">
-  
- <div class="card"> 
-  <h2 onclick="toggleHomeCheck()"
-style="cursor:pointer;">
-🏠 Home Protection Check ▼
-</h2>
+  <div class="card">
+    <h2>Purpose</h2>
+    <p>This tool helps review entry points, life safety, cameras, and protection gaps with the customer.</p>
+  </div>
+</div>
 
-<div id="homeCheckSection">  
+<!-- ASSESSMENT -->
+<div id="assessment" class="screen">
 
-    <label>Job Number</label>
-<input id="jobNumber"
-type="text"
-inputmode="numeric"
-placeholder="Enter Job Number">
+<div class="stepBar">
+  <div id="stepFill" class="stepFill"></div>
+</div>
+
+<div id="stepLabel" class="sub"></div>
+
+<!-- STEP 1 -->
+<div id="step1" class="step card">
+<h2>1. Customer Information</h2>
+
+<label>Job Number</label>
+<input id="jobNumber" inputmode="numeric" placeholder="Enter job number">
 
 <label>Customer Name</label>
-<input id="customerName" type="text" placeholder="Enter Customer Name">
+<input id="customerName" placeholder="Enter customer name">
 
-    <label>Protected Doors</label>
-    <input id="doors" type="number" value="3">
+<label>Address</label>
+<input id="address" placeholder="Enter address">
 
-    <label>Total First-Floor Windows</label>
-    <input id="windows" type="number" value="12">
+<label>Technician</label>
+<input id="technician" value="Jonathan Edwards">
+</div>
 
-    <label>Protected Windows</label>
-    <input id="protectedWindows" type="number" value="0">
+<!-- STEP 2 -->
+<div id="step2" class="step card">
+<h2>2. Home Layout</h2>
 
-    <label>Motion Detectors</label>
-    <input id="motions" type="number" value="0">
-
-    <label>Cameras</label>
-    <input id="cameras" type="number" value="0">
-
-    <label>Bedrooms</label>
-<input id="bedrooms" type="number" value="3">
-
-<label>Protected Bedrooms</label>
-<input id="protectedBedrooms" type="number" value="3">
-
-<label>Hallway Smoke Detector</label>
-<select id="hallSmoke">
-<option>Yes</option>
-<option>No</option>
+<label>Home Type</label>
+<select id="stories">
+<option>1 Story</option>
+<option>2 Story</option>
 </select>
 
-<label>Carbon Monoxide Protection</label>
+<label>Main Floor Doors</label>
+<div class="counter">
+<button onclick="changeValue('doors',-1)">−</button>
+<span id="doorsDisplay">3</span>
+<button onclick="changeValue('doors',1)">+</button>
+</div>
+
+<label>Main Floor Windows</label>
+<div class="counter">
+<button onclick="changeValue('mainWindows',-1)">−</button>
+<span id="mainWindowsDisplay">12</span>
+<button onclick="changeValue('mainWindows',1)">+</button>
+</div>
+
+<label>Second Floor Windows</label>
+<div class="counter">
+<button onclick="changeValue('secondWindows',-1)">−</button>
+<span id="secondWindowsDisplay">0</span>
+<button onclick="changeValue('secondWindows',1)">+</button>
+</div>
+</div>
+
+<!-- STEP 3 -->
+<div id="step3" class="step card">
+<h2>3. Life Safety</h2>
+
+<label>Bedrooms</label>
+<div class="counter">
+<button onclick="changeValue('bedrooms',-1)">−</button>
+<span id="bedroomsDisplay">3</span>
+<button onclick="changeValue('bedrooms',1)">+</button>
+</div>
+
+<label>Hallway Smoke / Combo Present?</label>
+<select id="hallwaySmoke">
+<option>No</option>
+<option>Yes</option>
+</select>
+
+<label>Carbon Monoxide Protection Present?</label>
 <select id="coProtection">
-<option>Yes</option>
 <option>No</option>
+<option>Yes</option>
 </select>
 
-    <label>Glass Break Sensors</label>
-    <input id="glass" type="number" value="0">
+<div class="summaryBox">
+<b>Recommended Life Safety</b>
+<div id="lifeSafetyPreview"></div>
+</div>
+</div>
 
-    <label>Customer Main Concern</label>
-    <select id="concern">
-      <option>Break-ins</option>
-      <option>Package Theft</option>
-      <option>Family Safety</option>
-      <option>Vacation Protection</option>
-      <option>Fire Safety</option>
-    </select>
+<!-- STEP 4 -->
+<div id="step4" class="step card">
+<h2>4. Camera Planner</h2>
 
-    <button onclick="analyzeHome()">Analyze Home</button>
-    <button onclick="saveJob()">
-💾 Save Job
-</button>
+<label>Doorbell Camera</label>
+<select id="doorbell">
+<option>No</option>
+<option>Yes</option>
+</select>
 
-<button onclick="emailJobs()">
-📧 Email Saved Jobs
-</button>
+<label>Front Camera</label>
+<select id="frontCam">
+<option>No</option>
+<option>Yes</option>
+</select>
 
-<button onclick="loadSavedJobs()">
-📋 Refresh Saved Jobs
-</button>
-</div>  <!-- closes homeCheckSection -->
-</div>  <!-- closes card -->
+<label>Left Side Camera</label>
+<select id="leftCam">
+<option>No</option>
+<option>Yes</option>
+</select>
 
-  </div>
+<label>Right Side Camera</label>
+<select id="rightCam">
+<option>No</option>
+<option>Yes</option>
+</select>
 
-  <div id="savedJobsScreen" class="hidden">
+<label>Backyard Camera</label>
+<select id="backCam">
+<option>No</option>
+<option>Yes</option>
+</select>
 
+<label>Garage / Driveway Camera</label>
+<select id="garageCam">
+<option>No</option>
+<option>Yes</option>
+</select>
+</div>
+
+<!-- STEP 5 -->
+<div id="step5" class="step card">
+<h2>5. Interior Protection</h2>
+
+<label>Motion Detectors</label>
+<div class="counter">
+<button onclick="changeValue('motions',-1)">−</button>
+<span id="motionsDisplay">0</span>
+<button onclick="changeValue('motions',1)">+</button>
+</div>
+
+<label>Glass Break Sensors</label>
+<div class="counter">
+<button onclick="changeValue('glassBreaks',-1)">−</button>
+<span id="glassBreaksDisplay">0</span>
+<button onclick="changeValue('glassBreaks',1)">+</button>
+</div>
+
+<label>Keypads</label>
+<div class="counter">
+<button onclick="changeValue('keypads',-1)">−</button>
+<span id="keypadsDisplay">1</span>
+<button onclick="changeValue('keypads',1)">+</button>
+</div>
+</div>
+
+<!-- STEP 6 -->
+<div id="step6" class="step card">
+<h2>6. Protection Review</h2>
+<div id="reportOutput"></div>
+
+<button class="good" onclick="generateReport()">🔄 Refresh Report</button>
+<button onclick="emailReport()">📧 Email Report</button>
+</div>
+
+<button id="backBtn" class="secondary" onclick="prevStep()">⬅️ Back</button>
+<button id="nextBtn" onclick="nextStep()">Next ➡️</button>
+
+</div>
+
+<!-- SAVED -->
+<div id="saved" class="screen">
 <div class="card">
-<h2>📋 Saved Jobs</h2>
-<div id="savedJobs"></div>
+<h2>📋 Saved Assessments</h2>
+<p>Saved jobs will be added in Part 3.</p>
+<button onclick="showScreen('dashboard')">⬅️ Back</button>
+</div>
 </div>
 
-<button onclick="showMainScreen()">⬅️ Back to Home Check</button>
-
-</div>
-  
-  <div id="results" class="hidden">
-
+<!-- REPORTS -->
+<div id="reports" class="screen">
 <div class="card">
-<h2>Job Information</h2>
-
-<div class="safe">
-Job Number:
-<span id="jobNumberDisplay"></span>
+<h2>📊 Reports</h2>
+<p>Reports and saved job history will be added in Part 3 and Part 4.</p>
+<button onclick="showScreen('dashboard')">⬅️ Back</button>
 </div>
-
-<div class="safe">
-Customer:
-<span id="customerNameDisplay"></span>
-</div>
-
-</div>
-    
-    <div class="card">
-<h2>Protection Review Summary</h2>
-
-<div class="safe">
-✅ Protected Doors:
-<span id="doorSummary"></span>
-</div>
-
-<div class="gap">
-🔴 Unprotected Windows:
-<span id="windowSummary"></span>
-</div>
-
-<div class="safe">
-🟡 Motion Detectors:
-<span id="motionSummary"></span>
-</div>
-
-<div id="cameraCard">
-🎥 Cameras:
-<span id="cameraSummary"></span>
-</div>
-
-<div class="gap">
-💥 Glass Break Protection:
-<span id="glassSummary"></span>
 </div>
 
 </div>
 
-    <div class="card">
-      <h2>Current Protection View</h2>
-      <div class="house">
-        <div class="box">
-          <div class="big">🚪</div>
-          <b id="doorView">0</b>
-          <div class="small">Protected Doors</div>
-        </div>
-        <div class="box">
-          <div class="big">🪟</div>
-          <b id="windowView">0</b>
-          <div class="small">Unprotected Windows</div>
-        </div>
-        <div class="box">
-          <div class="big">🎥</div>
-          <b id="cameraView">0</b>
-          <div class="small">Cameras</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Protection Gaps</h2>
-      <div id="gaps"></div>
-    </div>
-
-    <div class="card">
-      <h2>Security Scenarios</h2>
-      <div id="scenarios"></div>
-    </div>
-
-    <div class="card">
-      <h2>Recommended Protection Plan</h2>
-      <div id="recommendations"></div>
-    </div>
-
-    <div class="card">
-<h2>Life Safety Review</h2>
-<div id="lifeSafety"></div>
-</div>
-    
-    <div class="card">
-      <h2>Customer-Friendly Explanation</h2>
-      <p id="customerMessage"></p>
-    </div>
-
-    <button class="secondary" onclick="emailCurrentReport()">
-📧 Email Current Report
-</button>
-
-  </div>
-
+<div class="nav">
+<button onclick="showScreen('dashboard')">🏠 Home</button>
+<button onclick="startAssessment()">➕ New</button>
+<button onclick="showScreen('saved')">📋 Saved</button>
+<button onclick="showScreen('reports')">📊 Reports</button>
 </div>
 
 <script>
-function analyzeHome(){
-  const doors = Number(document.getElementById("doors").value) || 0;
-  const windows = Number(document.getElementById("windows").value) || 0;
-  const protectedWindows = Number(document.getElementById("protectedWindows").value) || 0;
-  const motions = Number(document.getElementById("motions").value) || 0;
-  const cameras = Number(document.getElementById("cameras").value) || 0;
-  const glass = Number(document.getElementById("glass").value) || 0;
-  const concern = document.getElementById("concern").value;
+let currentStep = 1;
 
-  const unprotectedWindows = Math.max(windows - protectedWindows, 0);
-
-const jobNumber =
-document.getElementById("jobNumber").value;
-
-const customerName =
-document.getElementById("customerName").value;
-  
-const bedrooms =
-Number(document.getElementById("bedrooms").value) || 0;
-
-const protectedBedrooms =
-Number(document.getElementById("protectedBedrooms").value) || 0;
-
-const hallSmoke =
-document.getElementById("hallSmoke").value;
-
-const coProtection =
-document.getElementById("coProtection").value;
-
-  let score = 100;
-
-  if(unprotectedWindows > 0) score -= Math.min(unprotectedWindows * 4, 35);
-  if(motions === 0) score -= 15;
-  if(cameras === 0) score -= 15;
-  if(glass === 0 && windows >= 6) score -= 10;
-
-  score = Math.max(score, 0);
-
-  document.getElementById("results").classList.remove("hidden");
-
-  document.getElementById("jobNumberDisplay").innerText =
-jobNumber;
-
-document.getElementById("customerNameDisplay").innerText =
-customerName;
-
-  document.getElementById("doorView").innerText = doors;
-document.getElementById("windowView").innerText = unprotectedWindows;
-document.getElementById("cameraView").innerText = cameras;
-
-document.getElementById("doorSummary").innerText = doors;
-document.getElementById("windowSummary").innerText = unprotectedWindows;
-document.getElementById("cameraSummary").innerText = cameras;
-const cameraCard =
-document.getElementById("cameraCard");
-
-cameraCard.className =
-(cameras === 0) ? "gap" : "safe";
-document.getElementById("motionSummary").innerText = motions;
-document.getElementById("glassSummary").innerText = glass;
-  let gaps = "";
-
-  if(unprotectedWindows > 0){
-    gaps += `<div class="gap">⚠️ ${unprotectedWindows} window openings are not currently protected.</div>`;
-  }else{
-    gaps += `<div class="safe">✅ All listed windows are protected.</div>`;
-  }
-
-  if(motions === 0){
-    gaps += `<div class="gap">⚠️ No motion detector is listed. Interior movement may not be detected quickly.</div>`;
-  }
-
-  if(cameras === 0){
-    gaps += `<div class="gap">⚠️ No camera coverage is listed. The system may alert, but may not provide video verification.</div>`;
-  }
-
-  if(glass === 0 && windows >= 6){
-    gaps += `<div class="gap">⚠️ No glass break sensor is listed for multiple window areas.</div>`;
-  }
-
-  document.getElementById("gaps").innerHTML = gaps;
-
-  let scenarios = `
-    <div class="safe"><b>Scenario 1: Door Opens</b><br>Protected door activates the alarm system.</div>
-  `;
-
-  if(unprotectedWindows > 0){
-    scenarios += `
-      <div class="gap"><b>Scenario 2: Window Opens</b><br>An unprotected window may not trigger the alarm immediately.</div>
-    `;
-  }
-
-  if(glass === 0){
-    scenarios += `
-      <div class="gap"><b>Scenario 3: Glass Break</b><br>Without glass break detection, broken glass may not be detected as a separate event.</div>
-    `;
-  }
-
-  if(cameras === 0){
-    scenarios += `
-      <div class="gap"><b>Scenario 4: Activity Outside</b><br>Without cameras, there may be no video record of who approached the home.</div>
-    `;
-  }
-
-  document.getElementById("scenarios").innerHTML = scenarios;
-
-  let recs = "";
-
-  if(unprotectedWindows > 0){
-    recs += `<div class="gap"><b>Window Protection</b><br>Recommended to help secure accessible window openings.</div>`;
-  }
-
-  if(motions === 0){
-    recs += `<div class="gap"><b>Motion Detector</b><br>Adds interior protection if someone enters an area of the home.</div>`;
-  }
-
-  if(cameras === 0){
-    recs += `<div class="gap"><b>Camera Coverage</b><br>Helps provide visibility and video history around important areas.</div>`;
-  }
-
-  if(glass === 0 && windows >= 6){
-    recs += `<div class="gap"><b>Glass Break Sensor</b><br>Recommended for rooms with several windows or large glass areas.</div>`;
-  }
-
-  if(concern === "Package Theft"){
-    recs += `<div class="safe"><b>Concern: Package Theft</b><br>A doorbell camera or front camera can help monitor deliveries.</div>`;
-  }
-
-  if(concern === "Vacation Protection"){
-    recs += `<div class="safe"><b>Concern: Vacation Protection</b><br>Cameras, motion detection, and window protection help monitor the home while away.</div>`;
-  }
-
-  if(concern === "Family Safety"){
-    recs += `<div class="safe"><b>Concern: Family Safety</b><br>Interior protection and video awareness can help monitor key areas.</div>`;
-  }
-
-  document.getElementById("recommendations").innerHTML = recs || "<div class='safe'>✅ No major gaps found based on this assessment.</div>";
-
-let lifeSafety = "";
-
-if(protectedBedrooms < bedrooms){
-lifeSafety += `
-<div class="gap">
-🔥 ${bedrooms - protectedBedrooms}
-bedroom(s) may not have smoke protection.
-</div>`;
-}
-
-if(hallSmoke === "No"){
-lifeSafety += `
-<div class="gap">
-🔥 No hallway smoke detector listed.
-</div>`;
-}
-
-if(coProtection === "No"){
-lifeSafety += `
-<div class="gap">
-💨 No carbon monoxide protection listed.
-</div>`;
-}
-
-if(lifeSafety === ""){
-lifeSafety = `
-<div class="safe">
-✅ Life safety protection appears complete based on the information entered.
-</div>`;
-}
-
-document.getElementById("lifeSafety").innerHTML = lifeSafety;
-  
-  document.getElementById("customerMessage").innerHTML =
-    `Based on this review, the doors may be protected, but the home may still have other possible entry points. 
-    This assessment helps show where protection is strong and where additional coverage may help improve security.`;
-}
-
- function toggleHomeCheck(){
-
-const section =
-document.getElementById("homeCheckSection");
-
-if(section.style.display === "none"){
-section.style.display = "block";
-}else{
-section.style.display = "none";
-}
-
-} 
-  function showMainScreen(){
-document.getElementById("mainScreen").classList.remove("hidden");
-document.getElementById("savedJobsScreen").classList.add("hidden");
-}
-
-function showSavedJobsScreen(){
-document.getElementById("mainScreen").classList.add("hidden");
-document.getElementById("savedJobsScreen").classList.remove("hidden");
-loadSavedJobs();
-}
-
-function saveJob(){
-
-analyzeHome();
-
-const jobs =
-JSON.parse(localStorage.getItem("securityJobs") || "[]");
-
-const job = {
-jobNumber: document.getElementById("jobNumber").value,
-customerName: document.getElementById("customerName").value,
-doors: document.getElementById("doors").value,
-windows: document.getElementById("windows").value,
-protectedWindows: document.getElementById("protectedWindows").value,
-motions: document.getElementById("motions").value,
-cameras: document.getElementById("cameras").value,
-glass: document.getElementById("glass").value,
-bedrooms: document.getElementById("bedrooms").value,
-protectedBedrooms: document.getElementById("protectedBedrooms").value,
-hallSmoke: document.getElementById("hallSmoke").value,
-coProtection: document.getElementById("coProtection").value,
-concern: document.getElementById("concern").value,
-date: new Date().toLocaleString()
+let data = {
+doors:3,
+mainWindows:12,
+secondWindows:0,
+bedrooms:3,
+motions:0,
+glassBreaks:0,
+keypads:1
 };
 
-const existingIndex =
-jobs.findIndex(j => j.jobNumber === job.jobNumber && job.jobNumber !== "");
+function showScreen(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
 
-if(existingIndex >= 0){
-jobs[existingIndex] = job;
+function startAssessment(){
+showScreen("assessment");
+currentStep = 1;
+showStep();
+}
+
+function showStep(){
+document.querySelectorAll(".step").forEach(s=>s.style.display="none");
+document.getElementById("step"+currentStep).style.display="block";
+
+document.getElementById("stepLabel").innerText =
+"Step " + currentStep + " of 6";
+
+document.getElementById("stepFill").style.width =
+(currentStep / 6 * 100) + "%";
+
+document.getElementById("backBtn").style.display =
+currentStep === 1 ? "none" : "block";
+
+document.getElementById("nextBtn").innerText =
+currentStep === 6 ? "Finish" : "Next ➡️";
+
+updateLifeSafetyPreview();
+
+if(currentStep === 6){
+generateReport();
+}
+}
+
+function nextStep(){
+if(currentStep < 6){
+currentStep++;
+showStep();
 }else{
-jobs.push(job);
+generateReport();
+}
 }
 
-localStorage.setItem("securityJobs", JSON.stringify(jobs));
-
-alert("Job Saved");
-showSavedJobsScreen();
+function prevStep(){
+if(currentStep > 1){
+currentStep--;
+showStep();
+}
 }
 
-function loadSavedJobs(){
+function changeValue(key,amount){
+data[key] = Math.max(0,data[key] + amount);
+document.getElementById(key+"Display").innerText = data[key];
+updateLifeSafetyPreview();
+}
 
-const jobs =
-JSON.parse(localStorage.getItem("securityJobs") || "[]");
+function updateLifeSafetyPreview(){
+const bedrooms = data.bedrooms;
+const hallway = document.getElementById("hallwaySmoke")?.value || "No";
+const co = document.getElementById("coProtection")?.value || "No";
 
 let html = "";
 
-jobs.forEach((job,index)=>{
+html += `<div>🔥 Bedroom Combo Smokes Recommended: <b>${bedrooms}</b></div>`;
 
-html += `
-<div class="safe">
-<b>Job #${job.jobNumber || "No Job Number"}</b><br>
-Customer: ${job.customerName || "No Customer Name"}<br>
-Date: ${job.date}<br><br>
+html += hallway === "Yes"
+? `<div class="goodText">✅ Hallway Smoke / Combo Present</div>`
+: `<div class="badText">⚠️ Hallway Smoke / Combo Recommended</div>`;
 
-<button onclick="viewJob(${index})">
-👁 View Report
-</button>
+html += co === "Yes"
+? `<div class="goodText">✅ Carbon Monoxide Protection Present</div>`
+: `<div class="badText">⚠️ Carbon Monoxide Protection Recommended</div>`;
 
-<button onclick="deleteJob(${index})">
-🗑 Delete
-</button>
+document.getElementById("lifeSafetyPreview").innerHTML = html;
+}
+
+function generateReport(){
+const job = document.getElementById("jobNumber").value || "Not entered";
+const customer = document.getElementById("customerName").value || "Not entered";
+const address = document.getElementById("address").value || "Not entered";
+const tech = document.getElementById("technician").value || "Not entered";
+const stories = document.getElementById("stories").value;
+
+const doorbell = document.getElementById("doorbell").value;
+const frontCam = document.getElementById("frontCam").value;
+const leftCam = document.getElementById("leftCam").value;
+const rightCam = document.getElementById("rightCam").value;
+const backCam = document.getElementById("backCam").value;
+const garageCam = document.getElementById("garageCam").value;
+
+let totalWindows = data.mainWindows + data.secondWindows;
+
+let gaps = [];
+
+if(totalWindows > 0){
+gaps.push(`${totalWindows} window openings should be reviewed for protection.`);
+}
+
+if(data.motions === 0){
+gaps.push("No motion detector listed.");
+}
+
+if(data.glassBreaks === 0 && data.mainWindows >= 6){
+gaps.push("Glass break protection should be considered for rooms with multiple windows.");
+}
+
+if(doorbell === "No"){
+gaps.push("Doorbell camera not listed.");
+}
+
+if(frontCam === "No"){
+gaps.push("Front camera not listed.");
+}
+
+if(rightCam === "No"){
+gaps.push("Right side camera not listed.");
+}
+
+let life = [];
+
+life.push(`${data.bedrooms} bedroom combo smoke(s) recommended.`);
+
+if(document.getElementById("hallwaySmoke").value === "No"){
+life.push("Hallway smoke / combo recommended.");
+}
+
+if(document.getElementById("coProtection").value === "No"){
+life.push("Carbon monoxide protection recommended.");
+}
+
+let equipment = [];
+
+equipment.push(`${data.doors} Door Contacts`);
+equipment.push(`${totalWindows} Window Contacts`);
+equipment.push(`${data.bedrooms} Bedroom Combo Smokes`);
+
+if(document.getElementById("hallwaySmoke").value === "No"){
+equipment.push("1 Hallway Combo Smoke");
+}
+
+if(document.getElementById("coProtection").value === "No"){
+equipment.push("CO Protection");
+}
+
+if(data.motions === 0){
+equipment.push("1 Motion Detector");
+}
+
+if(data.glassBreaks === 0 && data.mainWindows >= 6){
+equipment.push("1 Glass Break Sensor");
+}
+
+if(doorbell === "No"){
+equipment.push("Doorbell Camera");
+}
+
+if(frontCam === "No"){
+equipment.push("Front Camera");
+}
+
+if(rightCam === "No"){
+equipment.push("Right Side Camera");
+}
+
+let html = `
+<div class="summaryBox">
+<b>Job #:</b> ${job}<br>
+<b>Customer:</b> ${customer}<br>
+<b>Address:</b> ${address}<br>
+<b>Technician:</b> ${tech}<br>
+<b>Home:</b> ${stories}
+</div>
+
+<div class="summaryBox">
+<b>Home Layout</b><br>
+Doors: ${data.doors}<br>
+Main Floor Windows: ${data.mainWindows}<br>
+Second Floor Windows: ${data.secondWindows}<br>
+Bedrooms: ${data.bedrooms}
+</div>
+
+<div class="summaryBox">
+<b>Protection Gaps</b><br>
+${gaps.map(g=>`<div class="badText">⚠️ ${g}</div>`).join("")}
+</div>
+
+<div class="summaryBox">
+<b>Life Safety Review</b><br>
+${life.map(l=>`<div class="warnText">🔥 ${l}</div>`).join("")}
+</div>
+
+<div class="summaryBox">
+<b>Equipment Needed</b><br>
+${equipment.map(e=>`<div class="goodText">✔ ${e}</div>`).join("")}
+</div>
+
+<div class="summaryBox">
+<b>Customer Explanation</b><br>
+This review shows the current protection areas and highlights additional coverage that may improve entry point protection, life safety, and video awareness.
 </div>
 `;
 
-});
-
-document.getElementById("savedJobs").innerHTML =
-html || "No Saved Jobs";
+document.getElementById("reportOutput").innerHTML = html;
 }
 
-function viewJob(index){
+function emailReport(){
+generateReport();
 
-const jobs =
-JSON.parse(localStorage.getItem("securityJobs") || "[]");
-
-const job = jobs[index];
-
-document.getElementById("jobNumber").value =
-job.jobNumber;
-
-document.getElementById("customerName").value =
-job.customerName;
-
-document.getElementById("doors").value =
-job.doors;
-
-document.getElementById("windows").value =
-job.windows;
-
-document.getElementById("protectedWindows").value =
-job.protectedWindows;
-
-document.getElementById("motions").value =
-job.motions;
-
-document.getElementById("cameras").value =
-job.cameras;
-
-document.getElementById("glass").value =
-job.glass;
-
-document.getElementById("bedrooms").value =
-job.bedrooms;
-
-document.getElementById("protectedBedrooms").value =
-job.protectedBedrooms;
-
-document.getElementById("hallSmoke").value =
-job.hallSmoke;
-
-document.getElementById("coProtection").value =
-job.coProtection;
-
-document.getElementById("concern").value =
-job.concern;
-
-document.getElementById("gaps").innerHTML =
-job.gaps;
-
-document.getElementById("lifeSafety").innerHTML =
-job.lifeSafety;
-
-document.getElementById("recommendations").innerHTML =
-job.recommendations;
-
-document.getElementById("customerMessage").innerHTML =
-job.customerMessage;
-
-document.getElementById("results")
-.scrollIntoView({
-behavior:"smooth"
-});
-  
-analyzeHome();
-}
-
-function deleteJob(index){
-
-const jobs =
-JSON.parse(localStorage.getItem("securityJobs") || "[]");
-
-jobs.splice(index,1);
-
-localStorage.setItem(
-"securityJobs",
-JSON.stringify(jobs)
-);
-
-loadSavedJobs();
-}
-
-function emailJobs(){
-
-const jobs =
-JSON.parse(localStorage.getItem("securityJobs") || "[]");
-
-let report =
-"Security Gap Analyzer Reports\n\n";
-
-jobs.forEach(job=>{
-
-report +=
-"Job #: " + job.jobNumber + "\n" +
-"Customer: " + job.customerName + "\n" +
-"Date: " + job.date + "\n\n";
-});
+const report = document.getElementById("reportOutput").innerText;
 
 window.location.href =
-"mailto:?subject=Security Gap Reports&body=" +
+"mailto:?subject=Security Gap Analyzer Pro Report&body=" +
 encodeURIComponent(report);
 }
 
-loadSavedJobs();
-
-function emailCurrentReport(){
-
-const report = `
-Security Gap Analyzer Report
-
-Job #: ${document.getElementById("jobNumber").value}
-Customer: ${document.getElementById("customerName").value}
-
-Protection Gaps
-${document.getElementById("gaps").innerText}
-
-Life Safety Review
-${document.getElementById("lifeSafety").innerText}
-
-Recommendations
-${document.getElementById("recommendations").innerText}
-`;
-
-window.location.href =
-"mailto:?subject=Security Gap Analyzer Report&body=" +
-encodeURIComponent(report);
-
-}
+showStep();
 </script>
 
 </body>
