@@ -340,6 +340,7 @@ button.danger{
 <div id="reportOutput"></div>
 
 <button class="good" onclick="generateReport()">🔄 Refresh Report</button>
+<button onclick="saveAssessment()">💾 Save Assessment</button>
 <button onclick="emailReport()">📧 Email Report</button>
 </div>
 
@@ -350,11 +351,20 @@ button.danger{
 
 <!-- SAVED -->
 <div id="saved" class="screen">
+
 <div class="card">
 <h2>📋 Saved Assessments</h2>
-<p>Saved jobs will be added in Part 3.</p>
+
+<input
+id="savedSearch"
+placeholder="Search by job number or customer"
+oninput="loadSavedJobs()">
+
+<div id="savedJobsList"></div>
+
 <button onclick="showScreen('dashboard')">⬅️ Back</button>
 </div>
+
 </div>
 
 <!-- REPORTS -->
@@ -603,6 +613,188 @@ window.location.href =
 encodeURIComponent(report);
 }
 
+function collectAssessment(){
+generateReport();
+
+return {
+id: Date.now(),
+jobNumber: document.getElementById("jobNumber").value || "",
+customerName: document.getElementById("customerName").value || "",
+address: document.getElementById("address").value || "",
+technician: document.getElementById("technician").value || "",
+stories: document.getElementById("stories").value,
+
+doors: data.doors,
+mainWindows: data.mainWindows,
+secondWindows: data.secondWindows,
+bedrooms: data.bedrooms,
+motions: data.motions,
+glassBreaks: data.glassBreaks,
+keypads: data.keypads,
+
+hallwaySmoke: document.getElementById("hallwaySmoke").value,
+coProtection: document.getElementById("coProtection").value,
+
+doorbell: document.getElementById("doorbell").value,
+frontCam: document.getElementById("frontCam").value,
+leftCam: document.getElementById("leftCam").value,
+rightCam: document.getElementById("rightCam").value,
+backCam: document.getElementById("backCam").value,
+garageCam: document.getElementById("garageCam").value,
+
+reportText: document.getElementById("reportOutput").innerText,
+reportHtml: document.getElementById("reportOutput").innerHTML,
+date: new Date().toLocaleString()
+};
+}
+
+function saveAssessment(){
+const jobs =
+JSON.parse(localStorage.getItem("sgaProJobs") || "[]");
+
+const job = collectAssessment();
+
+const existingIndex =
+jobs.findIndex(j =>
+j.jobNumber &&
+job.jobNumber &&
+j.jobNumber === job.jobNumber
+);
+
+if(existingIndex >= 0){
+job.id = jobs[existingIndex].id;
+jobs[existingIndex] = job;
+}else{
+jobs.push(job);
+}
+
+localStorage.setItem("sgaProJobs",JSON.stringify(jobs));
+
+alert("Assessment Saved");
+showScreen("saved");
+loadSavedJobs();
+}
+
+function loadSavedJobs(){
+const list =
+document.getElementById("savedJobsList");
+
+if(!list) return;
+
+const jobs =
+JSON.parse(localStorage.getItem("sgaProJobs") || "[]");
+
+const search =
+(document.getElementById("savedSearch")?.value || "").toLowerCase();
+
+const filtered =
+jobs.filter(job =>
+(job.jobNumber || "").toLowerCase().includes(search) ||
+(job.customerName || "").toLowerCase().includes(search)
+);
+
+let html = "";
+
+filtered.reverse().forEach(job=>{
+
+html += `
+<div class="summaryBox">
+<b>Job #:</b> ${job.jobNumber || "No Job Number"}<br>
+<b>Customer:</b> ${job.customerName || "No Customer"}<br>
+<b>Date:</b> ${job.date}<br><br>
+
+<button onclick="viewSavedJob(${job.id})">👁 View / Edit</button>
+<button onclick="emailSavedJob(${job.id})">📧 Email</button>
+<button class="danger" onclick="deleteSavedJob(${job.id})">🗑 Delete</button>
+</div>
+`;
+});
+
+list.innerHTML =
+html || `<div class="summaryBox">No saved assessments found.</div>`;
+}
+
+function viewSavedJob(id){
+const jobs =
+JSON.parse(localStorage.getItem("sgaProJobs") || "[]");
+
+const job =
+jobs.find(j => j.id === id);
+
+if(!job){
+alert("Saved job not found");
+return;
+}
+
+document.getElementById("jobNumber").value = job.jobNumber;
+document.getElementById("customerName").value = job.customerName;
+document.getElementById("address").value = job.address;
+document.getElementById("technician").value = job.technician;
+document.getElementById("stories").value = job.stories;
+
+data.doors = job.doors;
+data.mainWindows = job.mainWindows;
+data.secondWindows = job.secondWindows;
+data.bedrooms = job.bedrooms;
+data.motions = job.motions;
+data.glassBreaks = job.glassBreaks;
+data.keypads = job.keypads;
+
+document.getElementById("doorsDisplay").innerText = data.doors;
+document.getElementById("mainWindowsDisplay").innerText = data.mainWindows;
+document.getElementById("secondWindowsDisplay").innerText = data.secondWindows;
+document.getElementById("bedroomsDisplay").innerText = data.bedrooms;
+document.getElementById("motionsDisplay").innerText = data.motions;
+document.getElementById("glassBreaksDisplay").innerText = data.glassBreaks;
+document.getElementById("keypadsDisplay").innerText = data.keypads;
+
+document.getElementById("hallwaySmoke").value = job.hallwaySmoke;
+document.getElementById("coProtection").value = job.coProtection;
+
+document.getElementById("doorbell").value = job.doorbell;
+document.getElementById("frontCam").value = job.frontCam;
+document.getElementById("leftCam").value = job.leftCam;
+document.getElementById("rightCam").value = job.rightCam;
+document.getElementById("backCam").value = job.backCam;
+document.getElementById("garageCam").value = job.garageCam;
+
+showScreen("assessment");
+currentStep = 6;
+showStep();
+generateReport();
+}
+
+function emailSavedJob(id){
+const jobs =
+JSON.parse(localStorage.getItem("sgaProJobs") || "[]");
+
+const job =
+jobs.find(j => j.id === id);
+
+if(!job){
+alert("Saved job not found");
+return;
+}
+
+window.location.href =
+"mailto:?subject=Security Gap Analyzer Pro Report - Job " +
+encodeURIComponent(job.jobNumber || "") +
+"&body=" +
+encodeURIComponent(job.reportText || "");
+}
+
+function deleteSavedJob(id){
+if(!confirm("Delete this saved assessment?")) return;
+
+let jobs =
+JSON.parse(localStorage.getItem("sgaProJobs") || "[]");
+
+jobs = jobs.filter(j => j.id !== id);
+
+localStorage.setItem("sgaProJobs",JSON.stringify(jobs));
+
+loadSavedJobs();
+}
 showStep();
 </script>
 
