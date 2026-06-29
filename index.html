@@ -640,8 +640,6 @@ encodeURIComponent(report);
 function collectAssessment(){
 generateReport();
 
-techNotes: document.getElementById("techNotes")?.value || "",
-
 return {
 id: Date.now(),
 jobNumber: document.getElementById("jobNumber").value || "",
@@ -657,6 +655,8 @@ bedrooms: data.bedrooms,
 motions: data.motions,
 glassBreaks: data.glassBreaks,
 keypads: data.keypads,
+
+techNotes: document.getElementById("techNotes")?.value || "",
 
 hallwaySmoke: document.getElementById("hallwaySmoke").value,
 coProtection: document.getElementById("coProtection").value,
