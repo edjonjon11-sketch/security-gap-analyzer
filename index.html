@@ -187,6 +187,20 @@ font-size:14px;
 background:#178a4b;
 border-color:#4cff9b;
 }
+.signatureBox{
+background:white;
+border-radius:16px;
+margin-top:10px;
+padding:6px;
+}
+
+#signaturePad{
+width:100%;
+height:180px;
+touch-action:none;
+display:block;
+}
+  
 </style>
 </head>
 
@@ -454,9 +468,13 @@ This decision was made voluntarily.
 
 <label>Customer Signature</label>
 
-<input
-id="customerSignature"
-placeholder="Customer types name here">
+<div class="signatureBox">
+<canvas id="signaturePad"></canvas>
+</div>
+
+<button class="secondary" onclick="clearSignature()">
+🧽 Clear Signature
+</button>
 
 <label>Technician Signature</label>
 
@@ -547,6 +565,73 @@ currentStep = 1;
 showStep();
 }
 
+let signatureData = "";
+let drawing = false;
+
+function setupSignaturePad(){
+const canvas = document.getElementById("signaturePad");
+if(!canvas) return;
+
+const ctx = canvas.getContext("2d");
+const rect = canvas.getBoundingClientRect();
+
+canvas.width = rect.width;
+canvas.height = 180;
+
+ctx.lineWidth = 3;
+ctx.lineCap = "round";
+ctx.strokeStyle = "#000";
+
+function pos(e){
+const r = canvas.getBoundingClientRect();
+const touch = e.touches ? e.touches[0] : e;
+return {
+x: touch.clientX - r.left,
+y: touch.clientY - r.top
+};
+}
+
+function start(e){
+e.preventDefault();
+drawing = true;
+const p = pos(e);
+ctx.beginPath();
+ctx.moveTo(p.x,p.y);
+}
+
+function move(e){
+if(!drawing) return;
+e.preventDefault();
+const p = pos(e);
+ctx.lineTo(p.x,p.y);
+ctx.stroke();
+signatureData = canvas.toDataURL();
+}
+
+function end(){
+drawing = false;
+signatureData = canvas.toDataURL();
+}
+
+canvas.addEventListener("mousedown",start);
+canvas.addEventListener("mousemove",move);
+canvas.addEventListener("mouseup",end);
+canvas.addEventListener("mouseleave",end);
+
+canvas.addEventListener("touchstart",start,{passive:false});
+canvas.addEventListener("touchmove",move,{passive:false});
+canvas.addEventListener("touchend",end);
+}
+
+function clearSignature(){
+const canvas = document.getElementById("signaturePad");
+if(!canvas) return;
+
+const ctx = canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+signatureData = "";
+}
+  
 function showStep(){
 document.querySelectorAll(".step").forEach(s=>s.style.display="none");
 document.getElementById("step"+currentStep).style.display="block";
@@ -572,6 +657,8 @@ generateReport();
 if(currentStep === 7){
 document.getElementById("declinedItems").innerHTML =
 getDeclinedItems();
+
+setTimeout(setupSignaturePad,100);
 }
 
 }
@@ -926,6 +1013,10 @@ rightCam: data.rightCam,
 backCam: data.backCam,
 garageCam: data.garageCam,
 
+customerSignatureImage: signatureData,
+techSignature: document.getElementById("techSignature")?.value || "",
+declinedItems: getDeclinedItems(),
+  
 reportText: document.getElementById("reportOutput").innerText,
 reportHtml: document.getElementById("reportOutput").innerHTML,
 date: new Date().toLocaleString()
