@@ -467,7 +467,14 @@ secondWindows:0,
 bedrooms:3,
 motions:0,
 glassBreaks:0,
-keypads:1
+keypads:1,
+
+doorbell:false,
+frontCam:false,
+leftCam:false,
+rightCam:false,
+backCam:false,
+garageCam:false
 };
 
 function showScreen(id){
@@ -525,7 +532,31 @@ data[key] = Math.max(0,data[key] + amount);
 document.getElementById(key+"Display").innerText = data[key];
 updateLifeSafetyPreview();
 }
+function toggleCamera(camera){
 
+    const tile = document.getElementById(camera.replace("Cam","") + "Tile");
+
+    const status = document.getElementById(camera + "Status") ||
+                   document.getElementById(camera.replace("Cam","") + "CamStatus") ||
+                   document.getElementById(camera + "CamStatus");
+
+    if(!data[camera]){
+        data[camera] = true;
+    }else{
+        data[camera] = !data[camera];
+    }
+
+    if(data[camera]){
+        tile.classList.add("cameraSelected");
+        status.innerHTML = "✅ Selected";
+    }else{
+        tile.classList.remove("cameraSelected");
+        status.innerHTML = "Not Selected";
+    }
+
+    generateReport();
+}
+  
 function updateLifeSafetyPreview(){
 const bedrooms = data.bedrooms;
 const hallway = document.getElementById("hallwaySmoke")?.value || "No";
