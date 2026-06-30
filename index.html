@@ -786,8 +786,12 @@ jobs[existingIndex] = job;
 jobs.push(job);
 }
 
+console.log(jobs);
+  
 localStorage.setItem("sgaProJobs",JSON.stringify(jobs));
 
+console.log(job);
+  
 alert("Assessment Saved");
 showScreen("saved");
 loadSavedJobs();
