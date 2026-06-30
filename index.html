@@ -421,6 +421,65 @@ font-size:17px;
 
 </div>
 
+  <!-- STEP 7 -->
+<div id="step7" class="step card">
+
+<h2>7. Customer Decision & Signature</h2>
+
+<div class="summaryBox">
+
+<h3>Customer Declined Protection</h3>
+
+<div id="declinedItems">
+Loading...
+</div>
+
+</div>
+
+<div class="summaryBox">
+
+<h3>Customer Acknowledgment</h3>
+
+<p>
+I acknowledge that the technician reviewed the
+recommended protection options with me.
+
+I understand the recommendations and have
+chosen not to install the items listed above.
+
+This decision was made voluntarily.
+</p>
+
+</div>
+
+<label>Customer Signature</label>
+
+<input
+id="customerSignature"
+placeholder="Customer types name here">
+
+<label>Technician Signature</label>
+
+<input
+id="techSignature"
+value="Jonathan Edwards">
+
+<button class="good"
+onclick="saveAssessment()">
+
+💾 Save Signed Assessment
+
+</button>
+
+<button
+onclick="emailReport()">
+
+📧 Email Signed Report
+
+</button>
+
+</div>
+  
 <!-- SAVED -->
 <div id="saved" class="screen">
 
@@ -493,21 +552,31 @@ document.querySelectorAll(".step").forEach(s=>s.style.display="none");
 document.getElementById("step"+currentStep).style.display="block";
 
 document.getElementById("stepLabel").innerText =
-"Step " + currentStep + " of 6";
+"Step " + currentStep + " of 7";
 
 document.getElementById("stepFill").style.width =
-(currentStep / 6 * 100) + "%";
+(currentStep / 7 * 100) + "%";
 
 document.getElementById("backBtn").style.display =
 currentStep === 1 ? "none" : "block";
 
 document.getElementById("nextBtn").innerText =
-currentStep === 6 ? "Finish" : "Next ➡️";
+currentStep === 7 ? "Finish" : "Next ➡️";
 
 updateLifeSafetyPreview();
 
 if(currentStep === 6){
 generateReport();
+}
+
+if(currentStep === 7){
+document.getElementById("declinedItems").innerHTML =
+getDeclinedItems();
+}
+
+if(currentStep === 7){
+    generateReport();
+    updateDeclinedItems();
 }
 }
 
@@ -752,6 +821,67 @@ ${notes || "No notes entered."}
 document.getElementById("reportOutput").innerHTML = html;
 }
 
+function getDeclinedItems(){
+
+let declined = [];
+
+const totalWindows =
+data.mainWindows + data.secondWindows;
+
+if(totalWindows > 0){
+declined.push("Window Protection");
+}
+
+if(document.getElementById("hallwaySmoke").value === "No"){
+declined.push("Hallway Smoke / Combo Detector");
+}
+
+if(document.getElementById("coProtection").value === "No"){
+declined.push("Carbon Monoxide Detector");
+}
+
+if(data.motions === 0){
+declined.push("Motion Detector");
+}
+
+if(data.glassBreaks === 0 && data.mainWindows >= 6){
+declined.push("Glass Break Sensor");
+}
+
+if(!data.doorbell){
+declined.push("Doorbell Camera");
+}
+
+if(!data.frontCam){
+declined.push("Front Camera");
+}
+
+if(!data.leftCam){
+declined.push("Left Side Camera");
+}
+
+if(!data.rightCam){
+declined.push("Right Side Camera");
+}
+
+if(!data.backCam){
+declined.push("Back Yard Camera");
+}
+
+if(!data.garageCam){
+declined.push("Garage Camera");
+}
+
+if(declined.length === 0){
+return "<div class='goodText'>✅ Customer accepted all recommended protection.</div>";
+}
+
+return declined.map(item =>
+`<div class="badText">❌ ${item}</div>`
+).join("");
+
+}
+  
 function emailReport(){
 generateReport();
 
