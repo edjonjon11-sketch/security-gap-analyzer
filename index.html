@@ -588,12 +588,12 @@ const notes = document.getElementById("techNotes")?.value || "";
 const hallway = document.getElementById("hallwaySmoke").value;
 const co = document.getElementById("coProtection").value;
 
-const doorbell = document.getElementById("doorbell").value;
-const frontCam = document.getElementById("frontCam").value;
-const leftCam = document.getElementById("leftCam").value;
-const rightCam = document.getElementById("rightCam").value;
-const backCam = document.getElementById("backCam").value;
-const garageCam = document.getElementById("garageCam").value;
+const doorbell = data.doorbell;
+const frontCam = data.frontCam;
+const leftCam = data.leftCam;
+const rightCam = data.rightCam;
+const backCam = data.backCam;
+const garageCam = data.garageCam;
 
 const totalWindows = data.mainWindows + data.secondWindows;
 
@@ -753,12 +753,12 @@ techNotes: document.getElementById("techNotes")?.value || "",
 hallwaySmoke: document.getElementById("hallwaySmoke").value,
 coProtection: document.getElementById("coProtection").value,
 
-doorbell: document.getElementById("doorbell").value,
-frontCam: document.getElementById("frontCam").value,
-leftCam: document.getElementById("leftCam").value,
-rightCam: document.getElementById("rightCam").value,
-backCam: document.getElementById("backCam").value,
-garageCam: document.getElementById("garageCam").value,
+doorbell: data.doorbell,
+frontCam: data.frontCam,
+leftCam: data.leftCam,
+rightCam: data.rightCam,
+backCam: data.backCam,
+garageCam: data.garageCam,
 
 reportText: document.getElementById("reportOutput").innerText,
 reportHtml: document.getElementById("reportOutput").innerHTML,
@@ -875,12 +875,14 @@ document.getElementById("keypadsDisplay").innerText = data.keypads;
 document.getElementById("hallwaySmoke").value = job.hallwaySmoke;
 document.getElementById("coProtection").value = job.coProtection;
 
-document.getElementById("doorbell").value = job.doorbell;
-document.getElementById("frontCam").value = job.frontCam;
-document.getElementById("leftCam").value = job.leftCam;
-document.getElementById("rightCam").value = job.rightCam;
-document.getElementById("backCam").value = job.backCam;
-document.getElementById("garageCam").value = job.garageCam;
+data.doorbell = job.doorbell;
+data.frontCam = job.frontCam;
+data.leftCam = job.leftCam;
+data.rightCam = job.rightCam;
+data.backCam = job.backCam;
+data.garageCam = job.garageCam;
+
+updateCameraTiles();
 
 showScreen("assessment");
 currentStep = 6;
