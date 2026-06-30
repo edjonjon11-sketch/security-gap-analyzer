@@ -574,19 +574,22 @@ document.getElementById("declinedItems").innerHTML =
 getDeclinedItems();
 }
 
-if(currentStep === 7){
-    generateReport();
-    updateDeclinedItems();
-}
 }
 
 function nextStep(){
-if(currentStep < 6){
+
+if(currentStep < 7){
+
 currentStep++;
+
 showStep();
+
 }else{
-generateReport();
+
+showScreen("dashboard");
+
 }
+
 }
 
 function prevStep(){
@@ -738,30 +741,30 @@ gaps.push("Glass break protection should be considered for rooms with multiple w
 equipment.push(`${data.glassBreaks} Glass Break Sensor(s)`);
 }
 
-if(doorbell === "No"){
+if(doorbell){
 equipment.push("Doorbell Camera");
 gaps.push("Doorbell camera is not listed.");
 }
 
-if(frontCam === "No"){
+if(frontCam){
 equipment.push("Front Camera");
 gaps.push("Front camera is not listed.");
 }
 
-if(leftCam === "No"){
+if(leftCam){
 gaps.push("Left side camera is not listed.");
 }
 
-if(rightCam === "No"){
+if(rightCam){
 equipment.push("Right Side Camera");
 gaps.push("Right side camera is not listed.");
 }
 
-if(backCam === "No"){
+if(backCam){
 gaps.push("Backyard camera is not listed.");
 }
 
-if(garageCam === "No"){
+if(garageCam){
 gaps.push("Garage / driveway camera is not listed.");
 }
 
@@ -1048,7 +1051,7 @@ data.garageCam = job.garageCam;
 updateCameraTiles();
 
 showScreen("assessment");
-currentStep = 6;
+currentStep = 7;
 showStep();
 generateReport();
 }
