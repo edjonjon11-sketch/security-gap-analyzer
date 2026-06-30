@@ -154,6 +154,39 @@ button.danger{
   font-size:13px;
   padding:10px;
 }
+.cameraGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:14px;
+margin-top:20px;
+}
+
+.cameraTile{
+background:#0c1c31;
+border:2px solid #1f456d;
+border-radius:18px;
+padding:18px;
+text-align:center;
+font-size:22px;
+cursor:pointer;
+transition:.25s;
+}
+
+.cameraTile b{
+display:block;
+margin-top:8px;
+font-size:17px;
+}
+
+.cameraTile div{
+margin-top:8px;
+font-size:14px;
+}
+
+.cameraSelected{
+background:#178a4b;
+border-color:#4cff9b;
+}
 </style>
 </head>
 
@@ -269,43 +302,71 @@ button.danger{
 
 <!-- STEP 4 -->
 <div id="step4" class="step card">
+
 <h2>4. Camera Planner</h2>
 
-<label>Doorbell Camera</label>
-<select id="doorbell">
-<option>No</option>
-<option>Yes</option>
-</select>
+<p class="sub">
+Tap each area to show where cameras will be installed.
+</p>
 
-<label>Front Camera</label>
-<select id="frontCam">
-<option>No</option>
-<option>Yes</option>
-</select>
+<div class="cameraGrid">
 
-<label>Left Side Camera</label>
-<select id="leftCam">
-<option>No</option>
-<option>Yes</option>
-</select>
+<div class="cameraTile"
+id="doorbellTile"
+onclick="toggleCamera('doorbell')">
+🏠
+<br>
+<b>Doorbell</b>
+<div id="doorbellStatus">Not Selected</div>
+</div>
 
-<label>Right Side Camera</label>
-<select id="rightCam">
-<option>No</option>
-<option>Yes</option>
-</select>
+<div class="cameraTile"
+id="frontTile"
+onclick="toggleCamera('frontCam')">
+🚪
+<br>
+<b>Front</b>
+<div id="frontCamStatus">Not Selected</div>
+</div>
 
-<label>Backyard Camera</label>
-<select id="backCam">
-<option>No</option>
-<option>Yes</option>
-</select>
+<div class="cameraTile"
+id="leftTile"
+onclick="toggleCamera('leftCam')">
+⬅️
+<br>
+<b>Left Side</b>
+<div id="leftCamStatus">Not Selected</div>
+</div>
 
-<label>Garage / Driveway Camera</label>
-<select id="garageCam">
-<option>No</option>
-<option>Yes</option>
-</select>
+<div class="cameraTile"
+id="rightTile"
+onclick="toggleCamera('rightCam')">
+➡️
+<br>
+<b>Right Side</b>
+<div id="rightCamStatus">Not Selected</div>
+</div>
+
+<div class="cameraTile"
+id="backTile"
+onclick="toggleCamera('backCam')">
+🏡
+<br>
+<b>Back Yard</b>
+<div id="backCamStatus">Not Selected</div>
+</div>
+
+<div class="cameraTile"
+id="garageTile"
+onclick="toggleCamera('garageCam')">
+🚗
+<br>
+<b>Garage</b>
+<div id="garageCamStatus">Not Selected</div>
+</div>
+
+</div>
+
 </div>
 
 <!-- STEP 5 -->
