@@ -556,6 +556,39 @@ function toggleCamera(camera){
 
     generateReport();
 }
+
+
+function updateCameraTiles(){
+
+[
+"doorbell",
+"frontCam",
+"leftCam",
+"rightCam",
+"backCam",
+"garageCam"
+].forEach(camera=>{
+
+let tileId = camera.replace("Cam","");
+
+const tile =
+document.getElementById(tileId + "Tile");
+
+const status =
+document.getElementById(camera + "Status") ||
+document.getElementById(tileId + "CamStatus");
+
+if(data[camera]){
+    tile.classList.add("cameraSelected");
+    status.innerHTML = "✅ Selected";
+}else{
+    tile.classList.remove("cameraSelected");
+    status.innerHTML = "Not Selected";
+}
+
+});
+
+}
   
 function updateLifeSafetyPreview(){
 const bedrooms = data.bedrooms;
